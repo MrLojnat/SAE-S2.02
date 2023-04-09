@@ -23,5 +23,19 @@ public class Arc {
     public int getValuation() {
         return valeur;
     }
+    public boolean equals(Arc a){
+        return a.noeud_source==this.noeud_source && a.noeud_destination==this.noeud_destination;
 
+    }
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(noeud_source);
+        if(valeur==-1){
+            s.append(":");
+        }
+        else
+            s.append("-"+noeud_destination+"("+valeur+")");
+        s.append(", ");
+        return s.toString();
+    }
 }
