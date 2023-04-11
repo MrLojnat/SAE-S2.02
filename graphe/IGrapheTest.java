@@ -10,6 +10,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class IGrapheTest {
+	private IGraphe[] graphes = { 
+			new GrapheLArcs(), new GrapheLArcs(),
+			new GrapheMAdj(), new GrapheHHAdj()
+	};
 	// graphe de l'exercice 3.1 du poly de maths
 	// avec en plus un noeud isole : J
 	private String g31 = 
@@ -24,7 +28,7 @@ class IGrapheTest {
 			+ "I-H(10), "
 			+ "J:";
 	
-	private String g31a = ""       // melangee
+	private String g31a = ""       // arcs non tries
 			+ "D-C(5), D-E(3), D-B(3), "
 			+ "E-G(3), E-C(1), E-H(7), "
 			+ "I-H(10), "
@@ -34,16 +38,14 @@ class IGrapheTest {
 			+ "H-G(2), H-F(4), "
 			+ "A-C(2), A-D(1), "
 			+ "B-G(3), "
-			+ "C-H(2) "
-;
+			+ "C-H(2) ";
 	
 	@Test
 	void exo3_1Maths() {
-		GrapheLAdj gla = new GrapheLAdj(g31a); // on cree le graphe sans ordre particulier
-		tester3_1(gla);
-		
-		GrapheLArcs glarcs = new GrapheLArcs(g31a);
-		tester3_1(glarcs);
+		for (IGraphe g : graphes) {
+			g.peupler(g31a); 
+			tester3_1(g);			
+		}
 	}
 	
 	void tester3_1(IGraphe g) {
@@ -74,18 +76,22 @@ class IGrapheTest {
 				() -> g.ajouterArc("A", "B", -1)); // valuation negative
 	}
 	
-	@Test
-	void importer() throws NumberFormatException, FileNotFoundException {
-		System.out.println("SAE graphes");
-		IGraphe g = new GrapheLAdj();
+	void testImportation(IGraphe g) {
 		Arc a = GraphImporter.importer("graphes/ac/g-10-1.txt", g);
-		assertEquals(g.toString(), "1-3(5), "
+		assertEquals("1-3(5), "
 				+ "10-3(3), 2-1(5), 2-3(5), 2-5(4), "
 				+ "3-4(4), 3-5(4), 4-10(1), 4-2(1), 4-7(3), "
 				+ "5-9(4), 6-2(3), 6-3(4), 7-3(2),"
-				+ " 8-2(4), 8-6(1), 9-2(4)");
+				+ " 8-2(4), 8-6(1), 9-2(4)",
+				g.toString());
 		assertEquals("5", a.getSource());
-		assertEquals("7", a.getDestination());
+		assertEquals("7", a.getDestination());		
+	}
+	
+	@Test
+	void importer() throws NumberFormatException, FileNotFoundException {
+		for (IGraphe g : graphes)
+			testImportation(g);		
 	}
 
 }
