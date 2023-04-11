@@ -2,10 +2,7 @@ package graphe;
 
 import arc.Arc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GrapheLAdj implements IGraphe{
     private Map<String, List<Arc>> ladj;
@@ -25,27 +22,20 @@ public class GrapheLAdj implements IGraphe{
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException{
-        if(this.ladj.containsKey(source)){
-            if(!this.ladj.get(source).contains(destination)){
-                if(valeur < 0)
-                    throw new IllegalArgumentException("valuation negative");
-            }
-            else
-                throw new IllegalArgumentException("deja present");
+        if(contientSommet(source)){
+            if(contientArc(source, destination)) throw new IllegalArgumentException("deja present");
+            else if(valeur < 0) throw new IllegalArgumentException("valuation negative");
         }
-        else
-            if(!contientSommet(destination))
-                ajouterSommet(destination);
-            ajouterSommet(source);
-            if(!this.ladj.get(source).contains(destination)){
-                if(valeur < 0){
-                    oterSommet(source);
-                    oterSommet(destination);
-                    throw new IllegalArgumentException("valuation negative");
-                }
+        else {
+            if (!contientSommet(destination)) ajouterSommet(destination);
+            if (!contientSommet(source)) ajouterSommet(source);
+            if (valeur < 0) {
+                oterSommet(source);
+                oterSommet(destination);
+                throw new IllegalArgumentException("valuation negative");
             }
-            Arc a = new Arc(source, destination, valeur);
-            this.ladj.get(source).add(a);
+        }
+        this.ladj.get(source).add(new Arc(source, destination, valeur));
     }
 
     @Override
@@ -55,10 +45,12 @@ public class GrapheLAdj implements IGraphe{
 
     @Override
     public void oterArc(String source, String destination) {
-        if(!contientArc(source, destination))
-            throw new IllegalArgumentException("n'existe pas");
-        else
-                    this.ladj.get(source).remove(destination);
+        if (!contientArc(source, destination)) throw new IllegalArgumentException("n'existe pas");
+        else {
+            for (int i = 0; i < this.ladj.get(source).size(); ++i) {
+                if (this.ladj.get(source).get(i).getDestination().equals(destination)) this.ladj.get(source).remove(i);
+            }
+        }
     }
 
     @Override
@@ -96,12 +88,42 @@ public class GrapheLAdj implements IGraphe{
 
     @Override
     public boolean contientArc(String src, String dest) {
-        String d = dest;
         if(contientSommet(src)) {
             for (int i = 0; i < this.ladj.get(src).size(); ++i) {
                 return this.ladj.get(src).get(i).getDestination().equals(dest);
             }
         }
         return false;
+    }
+
+    public String toString(){
+        Map<String, List<Arc>> mapTriee = new TreeMap<>(this.ladj);
+        StringBuilder sb = new StringBuilder();
+        int cmp = 0;
+        for(Map.Entry<String, List<Arc>> mapTmp : mapTriee.entrySet()) {
+            String source = mapTmp.getKey();
+            ArrayList<Arc> tmpArc = new ArrayList<>(mapTriee.get(source));
+            if(tmpArc.isEmpty()){
+                sb.append(source + ":");
+                if(cmp != this.ladj.size() - 1) sb.append(", ");
+            }
+            else{
+                Collections.sort(tmpArc, new Comparator<Arc>() {
+                    @Override
+                    public int compare(Arc o1, Arc o2) {
+                        int r = o1.getSource().compareTo(o2.getSource());
+                        if(r == 0)
+                            r = o1.getDestination().compareTo(o2.getDestination());
+                        return r;
+                    }
+                });
+                for(Arc arc : tmpArc) {
+                    sb.append(arc.getSource() + "-" + arc.getDestination() + "(" + arc.getValuation() + ")");
+                    if(cmp != this.ladj.size() - 1) sb.append(", ");
+                }
+            }
+            cmp++;
+        }
+        return sb.toString();
     }
 }
