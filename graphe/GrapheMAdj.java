@@ -5,14 +5,20 @@ public class GrapheMAdj implements IGraphe{
     private int[][] matrice;
     private Map<String, Integer> indices;
 
-    public GrapheMAdj(String description_graphe){
+    public GrapheMAdj(String descriptionGraphe){
+        this();
+        peupler(descriptionGraphe);
+    }
+
+    public GrapheMAdj() {
         matrice = new int[0][0];
-        indices = new HashMap<>();
-        this.peupler(description_graphe);
+        indices = new LinkedHashMap<>();
     }
 
     @Override
     public void ajouterSommet(String noeud) {
+        if (indices.containsKey(noeud)) return;
+
         int[][] tmpMatrice = new int[matrice.length + 1][matrice.length + 1];
 
         for (int i = 0; i < matrice.length; ++i) {
@@ -22,24 +28,45 @@ public class GrapheMAdj implements IGraphe{
         Arrays.fill(tmpMatrice[matrice.length], -1);
         matrice = tmpMatrice;
 
-        indices.put(noeud, matrice.length);
+        indices.put(noeud, matrice.length - 1);
     }
 
     @Override
-    public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException{
+    public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException {
+        if (!indices.containsKey(source)) ajouterSommet(source);
+        if (!indices.containsKey(destination)) ajouterSommet(destination);
+
         int ligne = indices.get(source);
         int colonne = indices.get(destination);
 
-        if (matrice[ligne][colonne] == -1) throw new IllegalArgumentException("Déjà existant");
+        if (matrice[ligne][colonne] != -1) throw new IllegalArgumentException("Déjà existant");
         if (valeur < 0) throw new IllegalArgumentException("Valuation négative");
 
         matrice[ligne][colonne] = valeur;
     }
 
-    // à faire
     @Override
     public void oterSommet(String noeud) {
+        if (!indices.containsKey(noeud)) return;
+        int[][] tmpMatrice = new int[matrice.length - 1][matrice.length - 1];
 
+        for (int i = 0; i < matrice.length; ++i) {
+            for (int j = 0; j < matrice.length; ++j) {
+                if (i < indices.get(noeud) && j < indices.get(noeud)) tmpMatrice[i][j] = matrice[i][j];
+                else if (i > indices.get(noeud) && j > indices.get(noeud)) tmpMatrice[i-1][j-1] = matrice[i][j];
+                else if (i > indices.get(noeud) && j < indices.get(noeud)) tmpMatrice[i-1][j] = matrice[i][j];
+                else if (i < indices.get(noeud) && j > indices.get(noeud)) tmpMatrice[i][j-1] = matrice[i][j];
+            }
+        }
+
+        for (Map.Entry<String, Integer> sommet: indices.entrySet()) {
+            int valuation = sommet.getValue();
+            if (valuation > indices.get(noeud))
+                sommet.setValue(valuation - 1);
+        }
+
+        indices.remove(noeud);
+        matrice = tmpMatrice;
     }
 
     @Override
@@ -52,19 +79,17 @@ public class GrapheMAdj implements IGraphe{
     }
 
     @Override
-    public List<String> getSommets() {
-        return new ArrayList<>(indices.keySet());
-    }
+    public List<String> getSommets() { return new ArrayList<>(indices.keySet()); }
 
     @Override
     public List<String> getSucc(String sommet) {
-        ArrayList<String> successeurs = new ArrayList<>();
+        List<String> successeurs = new ArrayList<>();
         for (int i = 0; i < matrice.length; ++i) {
             if (matrice[indices.get(sommet)][i] != -1) {
-                // successeurs.add()
+               successeurs.add(indices.keySet().toArray()[i].toString());
             }
         }
-
+        Collections.sort(successeurs);
         return successeurs;
     }
 
@@ -90,8 +115,22 @@ public class GrapheMAdj implements IGraphe{
         return false;
     }
 
-    // à faire
     public String toString() {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> cles = new ArrayList<>(getSommets());
+        Collections.sort(cles);
+
+        for (String cle : cles) {
+            List<String> successeurs = getSucc(cle);
+            if (successeurs.isEmpty()) {
+                sb.append(cle + ":, ");
+            }
+            for (String succ : successeurs) {
+                sb.append(cle + "-" + succ + "(" + getValuation(cle, succ) + "), ");
+            }
+        }
+
+        sb.deleteCharAt(sb.length() - 2);
+        return sb.toString().trim();
     }
 }
