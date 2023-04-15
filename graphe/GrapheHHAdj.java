@@ -21,24 +21,17 @@ public class GrapheHHAdj implements IGraphe{
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException{
-        if(this.hhadj.containsKey(source)){
-            if (!this.hhadj.get(source).containsKey(destination)){
-                if (valeur < 0)
-                    throw new IllegalArgumentException("valuation negative");
-            }
-            else
-                throw new IllegalArgumentException("deja present");
+        if(contientSommet(source)){
+            if(contientArc(source, destination)) throw new IllegalArgumentException("deja present");
+            if(valeur < 0) throw new IllegalArgumentException("valuation negative");
         }
-        else {
-            if(!contientSommet(destination))
-                ajouterSommet(destination);
-            ajouterSommet(source);
-            if (!this.hhadj.get(source).containsKey(destination)){
-                if (valeur < 0) {
-                    oterSommet(source);
-                    oterSommet(destination);
-                    throw new IllegalArgumentException("valuation negative");
-                }
+        else{
+            if (!contientSommet(destination)) ajouterSommet(destination);
+            if (!contientSommet(source)) ajouterSommet(source);
+            if (valeur < 0) {
+                oterSommet(source);
+                oterSommet(destination);
+                throw new IllegalArgumentException("valuation negative");
             }
         }
         this.hhadj.get(source).put(destination, valeur);
@@ -71,14 +64,12 @@ public class GrapheHHAdj implements IGraphe{
     @Override
     public List<String> getSucc(String sommet) {
         Map<String,Integer> inner= this.hhadj.get(sommet);
-        ArrayList<String> listSucc = new ArrayList<>(inner.keySet());
-        return listSucc;
+        return new ArrayList<>(inner.keySet());
     }
 
     @Override
     public int getValuation(String src, String dest) {
-        int value = this.hhadj.get(src).get(dest);
-        return value;
+        return this.hhadj.get(src).get(dest);
     }
 
     @Override
@@ -110,7 +101,6 @@ public class GrapheHHAdj implements IGraphe{
                     sb.append(source + "-" + mapInner.getKey() + "(" + mapInner.getValue() + ")");
                     if(cmp != this.hhadj.size() - 1)
                         sb.append(", ");
-
                 }
             }
             cmp++;
