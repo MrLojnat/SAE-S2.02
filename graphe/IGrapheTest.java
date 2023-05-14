@@ -79,7 +79,7 @@ class IGrapheTest {
 	}
 
 	void testImportation(IGraphe g) {
-		Arc a = GraphImporter.importer("C:/Users/xhaso/IdeaProjects/SAE-S2.02-3/graphe/graphes/ac/g-10-1.txt", g);
+		Arc a = GraphImporter.importer("./graphes/ac/g-10-1.txt", g);
 		assertEquals("1-3(5), "
 				+ "10-3(3), 2-1(5), 2-3(5), 2-5(4), "
 				+ "3-4(4), 3-5(4), 4-10(1), 4-2(1), 4-7(3), "

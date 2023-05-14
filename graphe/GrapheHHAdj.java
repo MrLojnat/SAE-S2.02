@@ -2,7 +2,7 @@ package graphe;
 
 import java.util.*;
 
-public class GrapheHHAdj implements IGraphe{
+public class GrapheHHAdj extends Graphe{
     private Map<String, Map<String, Integer>> hhadj;
 
     public GrapheHHAdj(String description_graphe){
@@ -82,29 +82,5 @@ public class GrapheHHAdj implements IGraphe{
         if(contientSommet(src))
             return this.hhadj.get(src).containsKey(dest);
         return false;
-    }
-
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        int cmp = 0;
-        Map<String,Map<String, Integer>> Map = new TreeMap<>(this.hhadj);
-        for(Map.Entry<String, Map<String, Integer>> map : Map.entrySet()){
-            String source = map.getKey();
-            Map<String, Integer> inner = new TreeMap<>(Map.get(source));
-            if(inner.isEmpty()){
-                sb.append(source +":");
-                if(cmp != this.hhadj.size() - 1)
-                    sb.append(", ");
-            }
-            else {
-                for (Map.Entry<String, Integer> mapInner : inner.entrySet()) {
-                    sb.append(source + "-" + mapInner.getKey() + "(" + mapInner.getValue() + ")");
-                    if(cmp != this.hhadj.size() - 1)
-                        sb.append(", ");
-                }
-            }
-            cmp++;
-        }
-        return sb.toString();
     }
 }

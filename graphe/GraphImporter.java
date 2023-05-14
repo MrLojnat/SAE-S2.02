@@ -1,6 +1,8 @@
 package graphe;
 
 
+import arc.Arc;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;

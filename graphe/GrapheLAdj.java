@@ -4,7 +4,7 @@ import arc.Arc;
 
 import java.util.*;
 
-public class GrapheLAdj implements IGraphe{
+public class GrapheLAdj extends Graphe{
     private Map<String, List<Arc>> ladj;
 
     public GrapheLAdj(){
@@ -94,36 +94,5 @@ public class GrapheLAdj implements IGraphe{
             }
         }
         return false;
-    }
-
-    public String toString(){
-        Map<String, List<Arc>> mapTriee = new TreeMap<>(this.ladj);
-        StringBuilder sb = new StringBuilder();
-        int cmp = 0;
-        for(Map.Entry<String, List<Arc>> mapTmp : mapTriee.entrySet()) {
-            String source = mapTmp.getKey();
-            ArrayList<Arc> tmpArc = new ArrayList<>(mapTriee.get(source));
-            if(tmpArc.isEmpty()){
-                sb.append(source + ":");
-                if(cmp != this.ladj.size() - 1) sb.append(", ");
-            }
-            else{
-                Collections.sort(tmpArc, new Comparator<Arc>() {
-                    @Override
-                    public int compare(Arc o1, Arc o2) {
-                        int r = o1.getSource().compareTo(o2.getSource());
-                        if(r == 0)
-                            r = o1.getDestination().compareTo(o2.getDestination());
-                        return r;
-                    }
-                });
-                for(Arc arc : tmpArc) {
-                    sb.append(arc.getSource() + "-" + arc.getDestination() + "(" + arc.getValuation() + ")");
-                    if(cmp != this.ladj.size() - 1) sb.append(", ");
-                }
-            }
-            cmp++;
-        }
-        return sb.toString();
     }
 }

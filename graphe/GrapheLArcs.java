@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-public class GrapheLArcs implements IGraphe{
+public class GrapheLArcs extends Graphe{
     private ArrayList<Arc> LArcs;
     public GrapheLArcs(){
         LArcs = new  ArrayList<Arc>();
@@ -131,35 +131,5 @@ public class GrapheLArcs implements IGraphe{
             }
         }
         return false;
-    }
-    @Override
-    public String toString(){
-        Arc supstitution ;
-        ArrayList<Arc> arc2 = new ArrayList<>();//il faut que je trie dans l'ordre croissant les LArcs
-        for (int i = 0; i < LArcs.size(); i++) {
-            arc2.add(LArcs.get(i));
-        }
-        for (int j = 0; j < arc2.size()*400; j++) {
-            for (int i = 1; i < arc2.size(); i++) {
-                if(arc2.get(i).getSource().compareTo(arc2.get(i - 1).getSource()) == 0){
-                   if(arc2.get(i).getDestination().compareTo(arc2.get(i - 1).getDestination()) < 0) {
-                       supstitution = new Arc(arc2.get(i).getSource(), arc2.get(i).getDestination(), arc2.get(i).getValuation());
-
-                       arc2.add(i - 1, supstitution);
-                       arc2.remove(i + 1);
-                    }
-                }
-                if ((arc2.get(i).getSource().compareTo(arc2.get(i - 1).getSource()) < 0) ){
-                    supstitution = new Arc(arc2.get(i).getSource(), arc2.get(i).getDestination(), arc2.get(i).getValuation());
-                    arc2.add(i - 1, supstitution);
-                    arc2.remove(i + 1);
-                }
-            }
-        }
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < arc2.size(); i++) {
-            s.append(arc2.get(i).toString());
-        }
-        return s.substring(0,s.length()-2).toString();
     }
 }

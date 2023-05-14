@@ -1,7 +1,7 @@
 package graphe;
 import java.util.*;
 
-public class GrapheMAdj implements IGraphe{
+public class GrapheMAdj extends Graphe{
     private int[][] matrice;
     private Map<String, Integer> indices;
 
@@ -113,24 +113,5 @@ public class GrapheMAdj implements IGraphe{
             return matrice[ligne][colonne] != -1;
         }
         return false;
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        ArrayList<String> cles = new ArrayList<>(getSommets());
-        Collections.sort(cles);
-
-        for (String cle : cles) {
-            List<String> successeurs = getSucc(cle);
-            if (successeurs.isEmpty()) {
-                sb.append(cle + ":, ");
-            }
-            for (String succ : successeurs) {
-                sb.append(cle + "-" + succ + "(" + getValuation(cle, succ) + "), ");
-            }
-        }
-
-        sb.deleteCharAt(sb.length() - 2);
-        return sb.toString().trim();
     }
 }
