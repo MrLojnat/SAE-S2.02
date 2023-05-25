@@ -34,6 +34,7 @@ public class GrapheMAdj extends Graphe{
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException {
+        if (valeur < 0) throw new IllegalArgumentException("Valuation négative");
         if (!indices.containsKey(source)) ajouterSommet(source);
         if (!indices.containsKey(destination)) ajouterSommet(destination);
 
@@ -41,8 +42,6 @@ public class GrapheMAdj extends Graphe{
         int colonne = indices.get(destination);
 
         if (matrice[ligne][colonne] != -1) throw new IllegalArgumentException("Déjà existant");
-        if (valeur < 0) throw new IllegalArgumentException("Valuation négative");
-
         matrice[ligne][colonne] = valeur;
     }
 

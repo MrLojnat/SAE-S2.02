@@ -21,8 +21,8 @@ public class GrapheHHAdj extends Graphe{
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException{
-        if (contientArc(source, destination)) throw new IllegalArgumentException("deja present");
         if (valeur < 0) throw new IllegalArgumentException("valuation negative");
+        if (contientArc(source, destination)) throw new IllegalArgumentException("deja present");
         if (!contientSommet(destination)) ajouterSommet(destination);
         if (!contientSommet(source)) ajouterSommet(source);
         this.hhadj.get(source).put(destination, valeur);

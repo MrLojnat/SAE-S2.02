@@ -22,19 +22,11 @@ public class GrapheLAdj extends Graphe{
 
     @Override
     public void ajouterArc(String source, String destination, Integer valeur) throws IllegalArgumentException{
-        if(contientSommet(source)){
-            if(contientArc(source, destination)) throw new IllegalArgumentException("deja present");
-            else if(valeur < 0) throw new IllegalArgumentException("valuation negative");
-        }
-        else {
-            if (!contientSommet(destination)) ajouterSommet(destination);
-            if (!contientSommet(source)) ajouterSommet(source);
-            if (valeur < 0) {
-                oterSommet(source);
-                oterSommet(destination);
-                throw new IllegalArgumentException("valuation negative");
-            }
-        }
+        if (valeur < 0) throw new IllegalArgumentException("valuation negative");
+        if (contientSommet(source) && contientArc(source, destination)) throw new IllegalArgumentException("deja present");
+        if (!contientSommet(destination)) ajouterSommet(destination);
+        if (!contientSommet(source)) ajouterSommet(source);
+
         this.ladj.get(source).add(new Arc(source, destination, valeur));
     }
 
